@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HousingAnywhere · Move-out demo</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <span class="wordmark">HousingAnywhere</span>
+    <span class="topline">From move-out to the next trusted move-in</span>
+  </div>
+  <div class="top-right">
+    <span class="keys">← → to step · R to reset</span>
+    <button class="restart" data-action="reset" title="Restart (R)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+      Restart
+    </button>
+  </div>
+</header>
+
+<main class="phones">
+  <section class="side" data-side="alex">
+    <div class="who"><span class="dot">A</span><div><strong>Alex</strong><small>Tenant</small></div></div>
+    <div class="fit"><div class="device"><div class="device-screen"><div class="app" id="alex"></div></div></div></div>
+  </section>
+  <section class="side" data-side="lucia">
+    <div class="who"><span class="dot dot-ll">L</span><div><strong>Lucia</strong><small>Landlord</small></div></div>
+    <div class="fit"><div class="device"><div class="device-screen"><div class="app" id="lucia"></div></div></div></div>
+  </section>
+</main>
+
+<section class="agent" id="agent" aria-live="polite"></section>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
