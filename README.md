@@ -2,7 +2,7 @@
 
 A clickable two-phone prototype of journey phase 07: Alex (tenant) checks out with
 anchor-guided photos, the tenant agent compares them with move-in, the landlord agent
-settles the deposit and relists, Lucia approves, and Alex gets a Tenant Passport stamp.
+settles the deposit and relists, Lucia approves, and Alex gets his deposit back.
 The dark bar below the phones is the agent, translating what is processed.
 
 Open `index.html` over HTTP:
@@ -33,12 +33,12 @@ The phone whose turn it is glows; the other dims. `→` / `←` step, `R` resets
    shutter fires. Second shot the same. Then *Auto-capture remaining 10*.
 4. **Comparing** runs by itself — Lucia's phone says she doesn't need to be there.
 5. **Inspection report** — drag the slider: scuff = normal wear, no charge; stain = €40.
-   Tap *Looks fair — send to Lucia*.
+   Tap *Looks fair — send to Lucia*. (Optional side step: *Don't agree — involve human
+   support* shows the escalation to a specialist on both phones; *Back to report* returns.)
 6. **Lucia** gets the agent's proposal — tap *Approve & relist*. Point out: agent
    proposes, rules calculate, a human decides.
 7. The checklist runs; Lucia's listing goes live with *Condition verified*.
-8. **Alex** taps *€760 is on its way* → Tenant Passport with the *Reliable tenant* stamp →
-   *Share my passport*.
+8. **Alex** gets *€210 is on its way* — deposit €250, minus €40 cleaning. End of the demo.
 
 Restart top right.
 

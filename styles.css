@@ -302,32 +302,5 @@ small { font-size: 12.5px; color: var(--muted-foreground); }
 .hero .photo { aspect-ratio: 4 / 3; }
 .hero .live { position: absolute; left: 12px; top: 12px; background: #fff; }
 
-/* passport */
-.pass {
-  border-radius: 20px; padding: 18px; color: #fff; margin-bottom: 14px;
-  background: linear-gradient(145deg, oklch(0.3 0.05 225), oklch(0.2 0.04 245));
-  box-shadow: var(--shadow-card);
-}
-.pass .top-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; opacity: .75; letter-spacing: .4px; text-transform: uppercase; font-weight: 650; }
-.pass .name { display: flex; align-items: center; gap: 12px; margin: 16px 0; }
-.pass .name .dot { width: 46px; height: 46px; font-size: 18px; background: oklch(1 0 0 / 15%); }
-.pass .name strong { font-size: 19px; display: block; }
-.pass .name small { color: oklch(1 0 0 / 70%); }
-.stamp {
-  display: flex; gap: 10px; align-items: center; border-radius: 12px; padding: 10px 12px;
-  background: oklch(1 0 0 / 10%); margin-top: 8px; font-size: 13.5px;
-}
-.stamp.new { background: oklch(0.653 0.212 32.5 / 30%); box-shadow: inset 0 0 0 1.5px var(--primary); animation: drop .6s cubic-bezier(.2,.9,.3,1.2); }
-.stamp small { display: block; color: oklch(1 0 0 / 70%); font-size: 12px; }
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-.stats div { background: oklch(0.975 0.006 236); border-radius: 12px; padding: 10px; text-align: center; }
-.stats b { display: block; font-size: 18px; }
-.stats small { font-size: 11px; }
-.toast {
-  position: absolute; left: 16px; right: 16px; bottom: 96px; z-index: 40;
-  background: var(--foreground); color: #fff; border-radius: 12px; padding: 11px 14px; font-size: 13.5px;
-  animation: drop .4s ease;
-}
-
 /* re-render of the same screen: don't replay entry animations */
-.still .screen, .still .notif, .still .stamp.new { animation: none; }
+.still .screen, .still .notif { animation: none; }

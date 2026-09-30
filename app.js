@@ -43,14 +43,12 @@ const STEPS = [
     ['tt', '2 changes found. Scuff on wall panel = normal wear after 12 months, no charge. Stain on rug = damage: fixed cleaning rate €40.'] ] },
   { id: 'approve', active: 'lucia', node: 3, busy: 'll', say: [
     ['tt', 'Alex agrees with the report. Handing over to the landlord agent.'],
-    ['ll', 'Proposal ready: €760 back to Alex, €40 cleaning, relist from 1 Oct with verified condition. The rules calculated it — Lucia decides.'] ] },
+    ['ll', 'Proposal ready: €210 back to Alex, €40 cleaning, relist from 1 Oct with verified condition. The rules calculated it — Lucia decides.'] ] },
   { id: 'settle', active: null, node: 3, busy: 'll', say: [
     ['ll', 'Approved by Lucia. Releasing deposit, booking cleaning, updating the listing…'] ] },
-  { id: 'live', active: 'alex', also: 'lucia', node: 4, say: [
+  { id: 'live', active: null, node: 5, say: [
     ['ll', 'Listing live with “Condition verified · 30 Sep 2026”. Lucia updated.'],
-    ['tt', '€760 released to Alex. Adding a stamp to his Tenant Passport.'] ] },
-  { id: 'passport', active: 'alex', also: 'lucia', node: 5, say: [
-    ['tt', 'Passport updated: reliable tenant. Alex decides who can see it — the next landlord, or another platform.'] ] },
+    ['tt', '€210 released to Alex. Checkout closed — no chasing, no dispute.'] ] },
 ];
 const at = (id) => STEPS.findIndex((s) => s.id === id);
 
@@ -64,7 +62,7 @@ const fresh = () => ({
   autoRunning: false,
   compared: 0,      // pairs compared (0..12)
   settled: 0,       // checklist items done
-  shared: false,
+  disputed: false,  // Alex asked for human support on the report
   extra: [],        // agent messages added by actions within the current step
 });
 let state = fresh();
@@ -115,7 +113,6 @@ const I = {
   anchor: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>',
   agent: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg>',
   euro: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 6.5A7 7 0 1 0 17 17.5M4 10h9M4 14h9"/></svg>',
-  share: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/></svg>',
 };
 
 const photo = (src, { damage = false, zones = false } = {}) => `
@@ -156,7 +153,7 @@ function alexScreen() {
         <div class="grow"><h3>${r.name}</h3><small>${r.n} anchor shots</small></div>
         ${i === 0 ? '<span class="chip hot">Start here</span>' : ''}</div>`).join('')}
       <div class="card soft row"><span class="ico">${I.shield}</span>
-        <div class="grow"><h3>Deposit €800</h3><small>Held safely by HousingAnywhere until the checkout is settled.</small></div></div>
+        <div class="grow"><h3>Deposit €250</h3><small>Held safely by HousingAnywhere until the checkout is settled.</small></div></div>
     </div>
     <div class="foot"><button class="btn btn-primary pulse" data-action="next">Start with the bedroom</button></div>
   </div>`;
@@ -176,6 +173,18 @@ function alexScreen() {
       </div>
     </div>`;
   }
+
+  if (id === 'report' && state.disputed) return `<div class="screen">
+    ${bar('Human support', 'Case HA-48213')}
+    <div class="scroll">
+      <div class="card row"><span class="ico">${I.agent}</span>
+        <div class="grow"><h3>A specialist is on it</h3><small>We'll review both photo sets and get back to you within 24 hours.</small></div></div>
+      <div class="card soft row"><span class="ico">${I.shield}</span>
+        <div class="grow"><h3>Your €250 stays safe</h3><small>Nothing is deducted until the case is resolved.</small></div></div>
+      <p>Your agent already shared the 12 photo pairs, the move-in report and the rules it applied — you don't have to explain it all again.</p>
+    </div>
+    <div class="foot"><button class="btn btn-outline" data-action="undispute">Back to report</button></div>
+  </div>`;
 
   if (id === 'report') return `<div class="screen">
     ${bar('Inspection report', 'Bedroom · 30 Sep 2026')}${demo}
@@ -198,12 +207,15 @@ function alexScreen() {
           <small>Not in move-in photos. Professional cleaning needed.</small><div class="rule">Rule: fixed cleaning rate, capped at actual cost.</div></div></div>
       </div>
       <div class="card">
-        <div class="kv"><span>Deposit</span><b>€800</b></div>
+        <div class="kv"><span>Deposit</span><b>€250</b></div>
         <div class="kv"><span>Rug cleaning</span><b>− €40</b></div>
-        <div class="kv total"><span>Back to you</span><b>€760</b></div>
+        <div class="kv total"><span>Back to you</span><b>€210</b></div>
       </div>
     </div>
-    <div class="foot"><button class="btn btn-primary pulse" data-action="next">Looks fair — send to Lucia</button></div>
+    <div class="foot">
+      <button class="btn btn-primary pulse" data-action="next">Looks fair — send to Lucia</button>
+      <button class="btn btn-outline" data-action="dispute">Don't agree — involve human support</button>
+    </div>
   </div>`;
 
   if (id === 'approve' || id === 'settle') return `<div class="screen">
@@ -213,37 +225,17 @@ function alexScreen() {
         <div class="grow"><h3>${id === 'settle' ? 'Lucia approved' : 'Waiting for Lucia'}</h3>
         <small>${id === 'settle' ? 'Releasing your deposit…' : 'Her agent already has the report. No need to chase anyone.'}</small></div></div>
       <div class="card">
-        <div class="kv"><span>Deposit</span><b>€800</b></div>
+        <div class="kv"><span>Deposit</span><b>€250</b></div>
         <div class="kv"><span>Rug cleaning</span><b>− €40</b></div>
-        <div class="kv total"><span>Back to you</span><b>€760</b></div>
+        <div class="kv total"><span>Back to you</span><b>€210</b></div>
       </div>
       <p><small>You agreed to this report at 09:52.</small></p>
     </div>
   </div>`;
 
   if (id === 'live') return lock(
-    notif('€760 is on its way', 'Deposit settled with Lucia. Your Tenant Passport has a new stamp — tap to see it.', { action: 'next', pulse: true }));
+    notif('€210 is on its way', 'Deposit settled with Lucia. Thanks for leaving the room in good shape, Alex!', { pulse: true }));
 
-  // passport
-  return `<div class="screen">
-    ${bar('Tenant Passport')}
-    <div class="scroll">
-      <div class="pass">
-        <div class="top-row"><span>Tenant Passport</span><span>${I.shield}</span></div>
-        <div class="name"><span class="dot">A</span><div><strong>Alex</strong><small>Student · verified since 2025</small></div></div>
-        <div class="stamp">${I.check}<div>ID &amp; income verified<small>Reusable across platforms</small></div></div>
-        <div class="stamp new">${I.shield}<div><b>Reliable tenant</b><small>Rotterdam · Sep 2025 – Sep 2026</small></div></div>
-      </div>
-      <div class="stats">
-        <div><b>12/12</b><small>rent on time</small></div>
-        <div><b>95%</b><small>deposit back</small></div>
-        <div><b>✓</b><small>condition verified</small></div>
-      </div>
-      <p>You decide who sees this. Share it with your next landlord — on HousingAnywhere or anywhere else.</p>
-    </div>
-    ${state.shared ? '<div class="toast">Share link created · valid 30 days · you can revoke it anytime</div>' : ''}
-    <div class="foot"><button class="btn btn-primary${state.shared ? '' : ' pulse'}" data-action="share">${I.share} Share my passport</button></div>
-  </div>`;
 }
 
 function camScreen() {
@@ -284,7 +276,7 @@ function autoScreen() {
 /* ---------------------------------------------------------------- Lucia */
 
 const SETTLE = [
-  '€760 released to Alex',
+  '€210 released to Alex',
   '€40 reserved for rug cleaning',
   'Cleaner booked · 1 Oct, 09:00',
   'Listing updated with 12 verified photos',
@@ -305,7 +297,9 @@ function luciaScreen() {
       checkout: ['ico ll', I.agent, 'Checkout started', 'Alex is photographing the rooms from the move-in anchors.'],
       capture: ['ico ll', I.anchor, `Checkout · ${state.captured}/${TOTAL} photos`, 'Every photo is matched to its move-in twin.'],
       compare: ['spin', '', 'Inspection running', 'You don’t need to be there. The comparison runs on verified evidence.'],
-      report: ['ico ll', I.check, 'Report ready', 'Alex is reviewing it. You’ll get a proposal next.'],
+      report: state.disputed
+        ? ['ico ll', I.agent, 'Human review requested', 'Alex asked HousingAnywhere support to check the report. Deposit on hold — no action needed from you.']
+        : ['ico ll', I.check, 'Report ready', 'Alex is reviewing it. You’ll get a proposal next.'],
     }[id];
     return `<div class="screen">
       ${bar('My listings', 'Lucia · 1 property')}
@@ -327,9 +321,9 @@ function luciaScreen() {
         <div class="finding"><span class="num">2</span><div class="grow"><div class="row"><h3 class="grow">Stain on rug</h3><span class="chip hot">€40 cleaning</span></div></div></div>
       </div>
       <div class="card">
-        <div class="kv"><span>Deposit held</span><b>€800</b></div>
+        <div class="kv"><span>Deposit held</span><b>€250</b></div>
         <div class="kv"><span>Cleaning (to you)</span><b>€40</b></div>
-        <div class="kv total"><span>Back to Alex</span><b>€760</b></div>
+        <div class="kv total"><span>Back to Alex</span><b>€210</b></div>
       </div>
       <div class="card soft row"><span class="ico ll">${I.agent}</span>
         <div class="grow"><h3>Relist from 1 Oct · €850</h3><small>With “Condition verified” and the 12 photos attached. Cleaner booked 1 Oct.</small></div></div>
@@ -346,7 +340,7 @@ function luciaScreen() {
     </div>
   </div>`;
 
-  // live, passport
+  // live
   return `<div class="screen">
     ${bar('My listings', 'Lucia · 1 property')}
     <div class="scroll">
@@ -404,13 +398,13 @@ function paint(el, html, key) {
 }
 
 function render() {
-  const { active, also } = STEPS[state.step];
+  const { active } = STEPS[state.step];
   const id = STEPS[state.step].id;
-  paint(ALEX, alexScreen(), `${id}:${state.shot}:${state.autoCap}`);
-  paint(LUCIA, luciaScreen(), id);
+  paint(ALEX, alexScreen(), `${id}:${state.shot}:${state.autoCap}:${state.disputed}`);
+  paint(LUCIA, luciaScreen(), `${id}:${state.disputed}`);
   for (const side of document.querySelectorAll('.side')) {
     side.classList.toggle('on', side.dataset.side === active);
-    side.classList.toggle('dim', !!active && side.dataset.side !== active && side.dataset.side !== also);
+    side.classList.toggle('dim', !!active && side.dataset.side !== active && !state.disputed);
   }
   renderAgent();
   const vf = $('[data-vf]', ALEX);
@@ -491,7 +485,15 @@ document.addEventListener('click', (e) => {
   const a = el.dataset.action;
   if (a === 'reset') { typed.clear(); go(0); }
   if (a === 'next') { el.disabled = true; next(); }  // disabled: no double-advance on double click
-  if (a === 'share') { state.shared = true; render(); }
+  if (a === 'dispute') {
+    state.disputed = true;
+    state.extra = [
+      ['tt', 'Alex doesn’t agree. Handing the case to a human specialist with all evidence: 12 photo pairs, move-in report, rules applied.'],
+      ['ll', 'Settlement paused, deposit stays on hold. Lucia informed — no action needed.'],
+    ];
+    render();
+  }
+  if (a === 'undispute') { state.disputed = false; state.extra = []; render(); }
   if (a === 'autocap') {
     const tick = () => {
       state.captured++;
