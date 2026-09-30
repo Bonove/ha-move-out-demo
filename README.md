@@ -35,7 +35,8 @@ The phone whose turn it is glows; the other dims. `→` / `←` step, `R` resets
 5. **Inspection report** — drag the slider: scuff = normal wear, no charge; stain = €40.
    Tap *Looks fair — send to Lucia*. (Optional side step: *Don't agree — involve human
    support* shows the escalation to a specialist on both phones; *Back to report* returns.)
-6. **Lucia** gets the agent's proposal — tap *Approve & relist*. Point out: agent
+6. **Lucia** gets the agent's proposal — tap *Approve & relist*. (Optional side step:
+   *Don't approve — involve human support*; *Back to proposal* returns.) Point out: agent
    proposes, rules calculate, a human decides.
 7. The checklist runs; Lucia's listing goes live with *Condition verified*.
 8. **Alex** gets *€210 is on its way* — deposit €250, minus €40 cleaning. End of the demo.

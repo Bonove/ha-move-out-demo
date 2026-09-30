@@ -62,7 +62,7 @@ const fresh = () => ({
   autoRunning: false,
   compared: 0,      // pairs compared (0..12)
   settled: 0,       // checklist items done
-  disputed: false,  // Alex asked for human support on the report
+  disputed: false,  // human support asked for: by Alex (report) or Lucia (approve)
   extra: [],        // agent messages added by actions within the current step
 });
 let state = fresh();
@@ -218,6 +218,16 @@ function alexScreen() {
     </div>
   </div>`;
 
+  if (id === 'approve' && state.disputed) return `<div class="screen">
+    ${bar('Inspection report', 'Bedroom · 30 Sep 2026')}
+    <div class="scroll">
+      <div class="card row"><span class="ico">${I.agent}</span>
+        <div class="grow"><h3>Lucia asked for a human review</h3><small>A HousingAnywhere specialist checks the report. You don't need to do anything.</small></div></div>
+      <div class="card soft row"><span class="ico">${I.shield}</span>
+        <div class="grow"><h3>Your €250 stays safe</h3><small>Nothing is deducted until the case is resolved.</small></div></div>
+    </div>
+  </div>`;
+
   if (id === 'approve' || id === 'settle') return `<div class="screen">
     ${bar('Inspection report', 'Bedroom · 30 Sep 2026')}
     <div class="scroll">
@@ -311,6 +321,18 @@ function luciaScreen() {
     </div>`;
   }
 
+  if (id === 'approve' && state.disputed) return `<div class="screen">
+    ${bar('Human support', 'Case HA-48214')}
+    <div class="scroll">
+      <div class="card row"><span class="ico ll">${I.agent}</span>
+        <div class="grow"><h3>A specialist is on it</h3><small>We'll review the photo pairs and your remarks, and get back to you within 24 hours.</small></div></div>
+      <div class="card soft row"><span class="ico ll">${I.shield}</span>
+        <div class="grow"><h3>Deposit on hold</h3><small>€250 stays with HousingAnywhere until the case is resolved. Damage cover applies if the damage exceeds it.</small></div></div>
+      <p>Your agent already shared the 12 photo pairs, the move-in report and the rules it applied — you don't have to explain it all again.</p>
+    </div>
+    <div class="foot"><button class="btn btn-outline" data-action="undispute">Back to proposal</button></div>
+  </div>`;
+
   if (id === 'approve') return `<div class="screen">
     ${bar('Move-out · Kralingen', 'Proposal from your agent')}${demo}
     <div class="scroll">
@@ -329,7 +351,10 @@ function luciaScreen() {
         <div class="grow"><h3>Relist from 1 Oct · €850</h3><small>With “Condition verified” and the 12 photos attached. Cleaner booked 1 Oct.</small></div></div>
       <p><small>Your agent proposed this. The deposit rules calculated it. You decide.</small></p>
     </div>
-    <div class="foot"><button class="btn btn-primary pulse" data-action="next">Approve &amp; relist</button></div>
+    <div class="foot">
+      <button class="btn btn-primary pulse" data-action="next">Approve &amp; relist</button>
+      <button class="btn btn-outline" data-action="dispute">Don't approve — involve human support</button>
+    </div>
   </div>`;
 
   if (id === 'settle') return `<div class="screen">
@@ -487,7 +512,10 @@ document.addEventListener('click', (e) => {
   if (a === 'next') { el.disabled = true; next(); }  // disabled: no double-advance on double click
   if (a === 'dispute') {
     state.disputed = true;
-    state.extra = [
+    state.extra = STEPS[state.step].id === 'approve' ? [
+      ['ll', 'Lucia doesn’t approve. Handing the case to a human specialist with all evidence: 12 photo pairs, move-in report, rules applied.'],
+      ['tt', 'Settlement paused, Alex’s deposit stays on hold. Alex informed — no action needed.'],
+    ] : [
       ['tt', 'Alex doesn’t agree. Handing the case to a human specialist with all evidence: 12 photo pairs, move-in report, rules applied.'],
       ['ll', 'Settlement paused, deposit stays on hold. Lucia informed — no action needed.'],
     ];
